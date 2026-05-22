@@ -1,0 +1,17 @@
+'use client';
+import LayoutShell from '@/components/LayoutShell';
+import { supabase } from '@/lib/supabase';
+import { Producto } from '@/lib/types';
+import { useEffect, useMemo, useState } from 'react';
+
+const empty = { nombre:'', categoria:'', precio:0, estado:'Activo', descripcion:'' };
+
+export default function ProductosPage(){
+  const [items,setItems]=useState<Producto[]>([]); const [q,setQ]=useState(''); const [msg,setMsg]=useState(''); const [form,setForm]=useState<any>(empty); const [editId,setEditId]=useState<string | null>(null);
+  const load=async()=>{const {data,error}=await supabase.from('productos').select('*').order('created_at',{ascending:false}); if(error) return setMsg(error.message); setItems((data??[]) as Producto[])};
+  useEffect(()=>{load()},[]);
+  const save=async(e:React.FormEvent)=>{e.preventDefault(); const user=(await supabase.auth.getUser()).data.user; if(!user) return setMsg('Sesión no válida.'); if(editId){const {error}=await supabase.from('productos').update(form).eq('id',editId); if(error)return setMsg(error.message);} else {const {error}=await supabase.from('productos').insert({...form,user_id:user.id}); if(error)return setMsg(error.message);} setForm(empty); setEditId(null); load();};
+  const remove=async(id:string)=>{const {error}=await supabase.from('productos').delete().eq('id',id); if(error)return setMsg(error.message); load();};
+  const list = useMemo(()=>items.filter(i=>i.nombre.toLowerCase().includes(q.toLowerCase())),[items,q]);
+  return <LayoutShell><div className="space-y-4"><h1 className="text-3xl font-bold">Catálogo de productos</h1><form onSubmit={save} className="card p-4 grid md:grid-cols-3 gap-3"><input className="input" placeholder="Nombre" value={form.nombre} onChange={e=>setForm({...form,nombre:e.target.value})} required/><input className="input" placeholder="Categoría" value={form.categoria} onChange={e=>setForm({...form,categoria:e.target.value})} /><input className="input" type="number" placeholder="Precio" value={form.precio} onChange={e=>setForm({...form,precio:Number(e.target.value)})} required/><select className="input" value={form.estado} onChange={e=>setForm({...form,estado:e.target.value})}><option>Activo</option><option>Inactivo</option></select><input className="border rounded p-2 md:col-span-2" placeholder="Descripción" value={form.descripcion} onChange={e=>setForm({...form,descripcion:e.target.value})}/><button className="btn-primary">{editId?'Guardar cambios':'Crear producto'}</button></form><input className="input" placeholder="Buscar producto" value={q} onChange={e=>setQ(e.target.value)} />{msg && <p className="text-sm text-slate-600">{msg}</p>}<div className="card overflow-hidden"><table className="w-full text-sm"><thead className="bg-blue-50"><tr><th className="p-3 text-left">Producto</th><th>Categoría</th><th>Precio</th><th>Estado</th><th>Acciones</th></tr></thead><tbody>{list.map(p=><tr key={p.id} className="border-t"><td className="p-3">{p.nombre}</td><td>{p.categoria}</td><td>${Number(p.precio).toLocaleString('es-CO')}</td><td><span className="px-2 py-1 rounded bg-blue-100">{p.estado}</span></td><td className="space-x-2"><button className="text-navy" onClick={()=>{setEditId(p.id);setForm(p)}}>Editar</button><button className="text-red-600" onClick={()=>remove(p.id)}>Eliminar</button></td></tr>)}</tbody></table></div></div></LayoutShell>
+}
