@@ -67,6 +67,12 @@ alter table public.compras enable row level security;
 alter table public.tareas enable row level security;
 alter table public.historial_acciones enable row level security;
 
+drop policy if exists "clientes_owner" on public.clientes;
+drop policy if exists "productos_owner" on public.productos;
+drop policy if exists "compras_owner" on public.compras;
+drop policy if exists "tareas_owner" on public.tareas;
+drop policy if exists "historial_owner" on public.historial_acciones;
+
 create policy "clientes_owner" on public.clientes for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 create policy "productos_owner" on public.productos for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 create policy "compras_owner" on public.compras for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
