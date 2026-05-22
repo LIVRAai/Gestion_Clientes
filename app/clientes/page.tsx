@@ -54,7 +54,7 @@ export default function ClientesPage() {
 
   const list = useMemo(() => clientes.filter((c) => (!q || c.nombre.toLowerCase().includes(q.toLowerCase())) && (!etapa || c.etapa_ciclo_vida === etapa)), [clientes, q, etapa]);
 
-  return <LayoutShell><div className="space-y-4"><h1 className="text-3xl font-bold">Clientes priorizados</h1>
+  return <LayoutShell><div className="space-y-4"><h1 className="text-3xl font-bold">Base de clientes</h1>
     <form onSubmit={saveCliente} className="card p-4 grid md:grid-cols-3 gap-3">
       <input className="input" placeholder="Nombre" value={form.nombre} onChange={(e)=>setForm({...form,nombre:e.target.value})} required />
       <input className="input" placeholder="Celular" value={form.celular} onChange={(e)=>setForm({...form,celular:e.target.value})} required />
@@ -68,5 +68,5 @@ export default function ClientesPage() {
     </form>
     <div className="flex gap-3"><input className="input" placeholder="Buscar cliente" value={q} onChange={e=>setQ(e.target.value)} /><select className="input" value={etapa} onChange={e=>setEtapa(e.target.value)}><option value="">Todas las etapas</option>{etapas.map(x=><option key={x}>{x}</option>)}</select></div>
     {msg && <p className="text-sm text-slate-700">{msg}</p>}
-    <div className="card overflow-hidden"><table className="w-full text-sm"><thead className="bg-blue-50"><tr><th className="p-3 text-left">Nombre</th><th>Etapa</th><th>Estado</th><th>Origen</th><th>Acciones</th></tr></thead><tbody>{list.map(c=><tr key={c.id} className="border-t"><td className="p-3">{c.nombre}<p className="text-slate-500">{c.empresa}</p></td><td>{c.etapa_ciclo_vida}</td><td><span className="px-2 py-1 rounded bg-blue-100">{c.estado}</span></td><td>{c.origen}</td><td className="space-x-2"><Link href={`/clientes/${c.id}`} className="text-accent">Ver</Link><button onClick={()=>{setEditingId(c.id);setForm(c);}} className="text-navy">Editar</button><button onClick={()=>removeCliente(c.id)} className="text-red-600">Eliminar</button></td></tr>)}</tbody></table></div></div></LayoutShell>;
+    <div className="card overflow-hidden"><table className="w-full text-sm"><thead className="bg-blue-50"><tr><th className="p-3 text-left">Nombre</th><th>Etapa</th><th>Estado</th><th>Origen</th><th>Acciones</th></tr></thead><tbody>{list.map(c=><tr key={c.id} className="border-t"><td className="p-3">{c.nombre}<p className="text-slate-500">{c.empresa}</p></td><td>{c.etapa_ciclo_vida}</td><td><span className="px-2 py-1 rounded bg-blue-100">{c.estado}</span></td><td>{c.origen}</td><td className="space-x-2"><Link href={`/clientes/${c.id}`} className="text-accent">Ver</Link><button onClick={()=>{setEditingId(c.id);setForm(c);}} className="text-navy">Editar</button><a target="_blank" href={`https://wa.me/57${c.celular}`} className="text-green-600">WhatsApp</a><button onClick={()=>removeCliente(c.id)} className="text-red-600">Eliminar</button></td></tr>)}</tbody></table>{list.length===0 && <div className="p-8 text-center text-slate-500">Aún no tienes clientes. Crea el primero para empezar a gestionar relaciones.</div>}</div></div></LayoutShell>;
 }
