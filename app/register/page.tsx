@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import Link from 'next/link';
 
 function saveAccessCookie(accessToken: string, expiresIn?: number) {
   const maxAge = expiresIn ?? 60 * 60;
@@ -54,18 +55,44 @@ export default function RegisterPage() {
   }
 
   return (
-    <form onSubmit={onSubmit} className="min-h-screen flex items-center justify-center">
-      <div className="card p-8 w-full max-w-md space-y-4">
-        <h1 className="text-2xl font-bold">Crear cuenta</h1>
-        <input name="email" className="w-full border rounded p-3" placeholder="Email" required />
-        <input name="password" type="password" className="w-full border rounded p-3" placeholder="Contraseña" required />
-        <button className="w-full bg-accent text-white rounded p-3">Registrarme</button>
-        {msg && (
-          <p className={`text-sm ${msgType === 'error' ? 'text-red-600' : msgType === 'success' ? 'text-green-700' : 'text-slate-700'}`}>
-            {msg}
-          </p>
-        )}
-      </div>
-    </form>
+    <div className="min-h-screen grid lg:grid-cols-2 page-fade-in">
+      <section className="hidden lg:flex bg-gradient-to-br from-navy to-[#102C59] text-white p-12 items-center">
+        <div className="max-w-md space-y-4">
+          <p className="badge !bg-white/10 !text-blue-100 !border-white/20">Nuevo usuario</p>
+          <h1 className="text-4xl font-bold leading-tight">Crea tu espacio comercial en minutos.</h1>
+          <p className="text-blue-100">Organiza clientes, registra compras y activa oportunidades de recompra desde el primer día.</p>
+        </div>
+      </section>
+
+      <section className="flex items-center justify-center p-6 bg-slatebg">
+        <form onSubmit={onSubmit} className="card w-full max-w-md p-8 space-y-5">
+          <div>
+            <h2 className="text-3xl font-bold">Crear cuenta</h2>
+            <p className="text-slate-600 text-sm mt-1">Empieza a gestionar tu CRM con experiencia premium.</p>
+          </div>
+
+          <div>
+            <label className="label">Correo electrónico</label>
+            <input name="email" className="input" placeholder="ejemplo@empresa.com" required />
+          </div>
+
+          <div>
+            <label className="label">Contraseña</label>
+            <input name="password" type="password" className="input" placeholder="Mínimo 6 caracteres" required />
+            <p className="help">Usa una contraseña segura para proteger tus datos comerciales.</p>
+          </div>
+
+          <button className="btn-primary w-full h-11">Crear usuario y continuar</button>
+
+          {msg && (
+            <p className={`text-sm ${msgType === 'error' ? 'text-red-600' : msgType === 'success' ? 'text-green-700' : 'text-slate-700'}`}>
+              {msg}
+            </p>
+          )}
+
+          <p className="text-sm text-slate-600">¿Ya tienes cuenta? <Link href="/login" className="text-accent font-medium">Iniciar sesión</Link></p>
+        </form>
+      </section>
+    </div>
   );
 }
