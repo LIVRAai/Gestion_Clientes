@@ -3,6 +3,7 @@ import LayoutShell from '@/components/LayoutShell';
 import { supabase } from '@/lib/supabase';
 import { Cliente, Compra } from '@/lib/types';
 import { scoreRecompraPorFecha, ultimaCompraPorCliente } from '@/lib/utils';
+import { calcularLifecycle } from '@/lib/lifecycle';
 import { cop, fechaCO } from '@/lib/format';
 import { useEffect, useMemo, useState } from 'react';
 
@@ -17,8 +18,8 @@ export default function Dashboard() {
   const totalVentas = compras.length;
   const valorVendido = compras.reduce((a, b) => a + Number(b.valor_total || 0), 0);
   const ticket = totalVentas ? valorVendido / totalVentas : 0;
-  const recaptura = clientes.filter((c) => scoreRecompraPorFecha(ultimaCompraPorCliente(compras, c.id)) === 'Recaptura').length;
-  const riesgo = clientes.filter((c) => scoreRecompraPorFecha(ultimaCompraPorCliente(compras, c.id)) === 'En riesgo').length;
+  const recaptura = clientes.filter((c) => calcularLifecycle(c, compras).etapa_ciclo_vida === 'Recaptura').length;
+  const riesgo = clientes.filter((c) => ['Retención','Recaptura'].includes(calcularLifecycle(c, compras).etapa_ciclo_vida)).length;
 
   const kpis = useMemo(() => [
     ['Clientes por etapa', clientes.length],
