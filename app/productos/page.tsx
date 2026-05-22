@@ -2,10 +2,9 @@
 import LayoutShell from '@/components/LayoutShell';
 import { supabase } from '@/lib/supabase';
 import { Producto } from '@/lib/types';
-import { cop } from '@/lib/format';
 import { useEffect, useMemo, useState } from 'react';
 
-const empty = { nombre:'', categoria:'', precio:'', estado:'Activo', descripcion:'' };
+const empty = { nombre:'', categoria:'', precio:0, estado:'Activo', descripcion:'' };
 
 export default function ProductosPage(){
   const [items,setItems]=useState<Producto[]>([]); const [q,setQ]=useState(''); const [msg,setMsg]=useState(''); const [form,setForm]=useState<any>(empty); const [editId,setEditId]=useState<string | null>(null);

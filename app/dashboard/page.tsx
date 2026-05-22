@@ -3,15 +3,14 @@ import LayoutShell from '@/components/LayoutShell';
 import { supabase } from '@/lib/supabase';
 import { Cliente, Compra } from '@/lib/types';
 import { scoreRecompraPorFecha, ultimaCompraPorCliente } from '@/lib/utils';
-import { cop, fechaCO } from '@/lib/format';
-import { motion } from 'framer-motion';
 import { useEffect, useMemo, useState } from 'react';
 
 export default function Dashboard() {
   const [clientes, setClientes] = useState<Cliente[]>([]);
   const [compras, setCompras] = useState<Compra[]>([]);
+
   useEffect(() => { (async () => {
-    const [c, co] = await Promise.all([supabase.from('clientes').select('*'), supabase.from('compras').select('*').order('fecha_compra',{ascending:false})]);
+    const [c, co] = await Promise.all([supabase.from('clientes').select('*'), supabase.from('compras').select('*')]);
     setClientes((c.data ?? []) as Cliente[]); setCompras((co.data ?? []) as Compra[]);
   })(); }, []);
 

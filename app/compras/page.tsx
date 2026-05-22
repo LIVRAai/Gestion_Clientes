@@ -2,14 +2,12 @@
 import LayoutShell from '@/components/LayoutShell';
 import { supabase } from '@/lib/supabase';
 import { Cliente, Compra, Producto } from '@/lib/types';
-import { cop, fechaCO } from '@/lib/format';
 import { useEffect, useMemo, useState } from 'react';
 
 export default function ComprasPage(){
   const [clientes,setClientes]=useState<Cliente[]>([]); const [productos,setProductos]=useState<Producto[]>([]); const [compras,setCompras]=useState<Compra[]>([]); const [msg,setMsg]=useState('');
-  const [form,setForm]=useState<any>({cliente_id:'',producto_id:'',fecha_compra:'',cantidad:'',valor_unitario:'',notas:''});
+  const [form,setForm]=useState<any>({cliente_id:'',producto_id:'',fecha_compra:new Date().toISOString().slice(0,10),cantidad:1,valor_unitario:0,notas:''});
   const valorTotal = useMemo(()=>Number(form.cantidad||0)*Number(form.valor_unitario||0),[form]);
-
   const load=async()=>{
     const [c,p,co]=await Promise.all([supabase.from('clientes').select('*'),supabase.from('productos').select('*'),supabase.from('compras').select('*').order('fecha_compra',{ascending:false})]);
     if(c.error||p.error||co.error){setMsg(c.error?.message||p.error?.message||co.error?.message||'Error'); return;}
