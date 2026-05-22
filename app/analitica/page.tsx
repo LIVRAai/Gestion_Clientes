@@ -3,6 +3,7 @@ import LayoutShell from '@/components/LayoutShell';
 import { supabase } from '@/lib/supabase';
 import { Cliente, Compra, Producto } from '@/lib/types';
 import { scoreRecompraPorFecha, ultimaCompraPorCliente } from '@/lib/utils';
+import { cop } from '@/lib/format';
 import { useEffect, useMemo, useState } from 'react';
 
 export default function AnaliticaPage(){
