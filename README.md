@@ -18,11 +18,38 @@ CRM SaaS moderno para pymes enfocado en ciclo de vida del cliente y recompra.
    ```bash
    cp .env.example .env.local
    ```
-3. Carga `supabase/schema.sql` en el SQL Editor de Supabase.
+3. Carga `supabase/schema.sql` en el SQL Editor de Supabase (**Run** completo).
 4. Ejecuta:
    ```bash
    npm run dev
    ```
+
+## Crear tablas en Supabase (paso obligatorio)
+Si en **Table Editor** ves `No tables created yet`, debes ejecutar el schema manualmente:
+
+1. Abre tu proyecto correcto en Supabase.
+2. Ve a **SQL Editor** → **New query**.
+3. Copia y pega **todo** el contenido de `supabase/schema.sql`.
+4. Presiona **Run**.
+5. Verifica con esta consulta:
+   ```sql
+   select table_name
+   from information_schema.tables
+   where table_schema = 'public'
+   order by table_name;
+   ```
+
+Debe listar al menos:
+- `clientes`
+- `productos`
+- `compras`
+- `tareas`
+- `historial_acciones`
+
+Si no aparecen:
+- confirma que estás en el proyecto correcto,
+- revisa errores en la salida del SQL Editor,
+- vuelve a ejecutar el script completo (es idempotente).
 
 ## Deploy en Vercel
 1. Importa el repo en Vercel.
