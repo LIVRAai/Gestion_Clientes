@@ -34,6 +34,39 @@ export default function ProductosPage(){
     <div className="card p-4"><label className="label">Buscar producto</label><input className="input" placeholder="Escribe nombre o categoría" value={q} onChange={e=>setQ(e.target.value)} /></div>
     {msg && <p className="text-sm text-slate-600">{msg}</p>}
 
-    <div className="card overflow-hidden"><table className="w-full text-sm table-fixed"><thead className="bg-blue-50"><tr><th className="p-3 text-left w-[34%]">Producto</th><th className="text-left w-[24%]">Categoría</th><th className="text-right pr-4 w-[16%]">Precio</th><th className="text-left w-[12%]">Estado</th><th className="text-left w-[14%]">Acciones</th></tr></thead><tbody>{list.map(p=><tr key={p.id} className="border-t align-middle"><td className="p-3 text-left">{p.nombre}</td><td className="text-left">{p.categoria || <span className='text-slate-400'>Sin categoría</span>}</td><td className="text-right pr-4 font-medium">{cop(Number(p.precio||0))}</td><td className="text-left"><span className="badge">{p.estado}</span></td><td><div className="flex gap-2 py-2"><button className="btn-secondary !px-3 !py-1.5 text-xs" onClick={()=>setForm({...p, precio:String(p.precio ?? '')})}>Ver</button><button className="btn-secondary !px-3 !py-1.5 text-xs" onClick={()=>{setEditId(p.id);setForm({...p, precio:String(p.precio ?? '')})}}>Editar</button><button className="btn-secondary !px-3 !py-1.5 text-xs !text-red-600" onClick={()=>remove(p.id)}>Eliminar</button></div></td></tr>)}</tbody></table>{list.length===0 && <div className="p-8 text-center text-slate-500">Aún no tienes productos. Crea el primero para construir tu catálogo comercial.</div>}</div>
+    {list.length===0 ? (
+      <div className="card p-10 text-center text-slate-500">Aún no tienes productos. Crea el primero para construir tu catálogo comercial.</div>
+    ) : (
+      <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-4">
+        {list.map((p) => (
+          <article key={p.id} className="card card-hover p-5 flex flex-col gap-4 border-blue-100">
+            <div className="space-y-2">
+              <div className="flex items-start justify-between gap-3">
+                <h3 className="text-lg font-semibold leading-tight">{p.nombre}</h3>
+                <span className="badge">{p.estado}</span>
+              </div>
+              <p className="text-sm text-slate-500">{p.categoria || 'Sin categoría'}</p>
+            </div>
+
+            <div className="rounded-xl bg-blue-50/70 border border-blue-100 p-3">
+              <p className="text-xs text-slate-500">Precio unitario</p>
+              <p className="text-xl font-bold text-navy">{cop(Number(p.precio||0))}</p>
+            </div>
+
+            {p.descripcion?.trim() ? (
+              <p className="text-sm text-slate-600">{p.descripcion}</p>
+            ) : (
+              <p className="text-sm text-slate-400">Sin descripción</p>
+            )}
+
+            <div className="mt-auto flex flex-wrap gap-2">
+              <button className="btn-secondary !px-3 !py-1.5 text-xs" onClick={()=>setForm({...p, precio:String(p.precio ?? '')})}>Ver</button>
+              <button className="btn-secondary !px-3 !py-1.5 text-xs" onClick={()=>{setEditId(p.id);setForm({...p, precio:String(p.precio ?? '')})}}>Editar</button>
+              <button className="btn-secondary !px-3 !py-1.5 text-xs !text-red-600" onClick={()=>remove(p.id)}>Eliminar</button>
+            </div>
+          </article>
+        ))}
+      </div>
+    )}
   </div></LayoutShell>
 }
