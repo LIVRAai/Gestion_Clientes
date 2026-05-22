@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { --navy:#0A1E3F; --accent:#2F80ED; --bg:#F6FAFF; }
+body { @apply text-navy; background: radial-gradient(circle at 10% 10%, rgba(47,128,237,.14), transparent 32%), radial-gradient(circle at 90% 0%, rgba(10,30,63,.09), transparent 28%), var(--bg); }
+.page-fade-in { animation: pageFadeIn .32s ease-out; }
+@keyframes pageFadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+@keyframes slideUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.card { @apply bg-white/90 backdrop-blur-sm rounded-2xl shadow-soft border border-blue-100 transition-all duration-200; animation: slideUp .35s ease-out both; }
+.card-hover { @apply hover:-translate-y-1 hover:shadow-xl; }
+.input { @apply w-full rounded-xl border border-blue-100 bg-white px-3 py-2 text-sm outline-none transition focus:ring-2 focus:ring-blue-200; }
+.btn-primary { @apply rounded-xl bg-accent px-4 py-2 text-white font-medium transition duration-200 hover:brightness-110 hover:scale-[1.01] active:scale-[0.99]; }
+.btn-secondary { @apply rounded-xl border border-blue-200 bg-white px-4 py-2 text-navy font-medium transition duration-200 hover:bg-blue-50 hover:scale-[1.01] active:scale-[0.99]; }
+.badge { @apply inline-flex items-center rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700 border border-blue-100 transition-colors duration-200 hover:bg-blue-100; }
+.nav-link { @apply transition-all duration-200; }
+table tbody tr { @apply transition-colors duration-150 hover:bg-blue-50/60; }
+.skeleton { @apply animate-pulse rounded-xl bg-blue-100/70; }
+
+.label { @apply block text-sm font-medium text-slate-700 mb-1; }
+.help { @apply mt-1 text-xs text-slate-500; }
