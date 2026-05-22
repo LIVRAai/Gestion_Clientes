@@ -11,13 +11,34 @@ export interface Cliente {
   etapa_ciclo_vida: Etapa;
   estado: Estado;
   origen: string;
-  ultima_compra: string | null;
-  valor_ultima_compra: number;
-  valor_estimado_recompra: number;
-  fecha_ultimo_contacto: string | null;
   notas: string;
   created_at: string;
   updated_at: string;
+}
+
+export interface Producto {
+  id: string;
+  user_id: string;
+  nombre: string;
+  categoria: string;
+  precio: number;
+  estado: 'Activo' | 'Inactivo';
+  descripcion: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Compra {
+  id: string;
+  user_id: string;
+  cliente_id: string;
+  producto_id: string;
+  fecha_compra: string;
+  cantidad: number;
+  valor_unitario: number;
+  valor_total: number;
+  notas: string;
+  created_at: string;
 }
 
 export interface Tarea {

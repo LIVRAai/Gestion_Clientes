@@ -1,4 +1,4 @@
-import { Cliente, Etapa } from './types';
+import { Compra, Etapa } from './types';
 
 export const etapas: Etapa[] = ['Atracción', 'Profundización', 'Fidelización', 'Retención', 'Recaptura'];
 
@@ -23,10 +23,15 @@ export function linkWhatsapp(celular: string, mensaje: string): string {
   return `https://wa.me/57${celular.replace(/\D/g, '')}?text=${encodeURIComponent(mensaje)}`;
 }
 
-export function scoreRecompra(cliente: Cliente): 'activo' | 'seguimiento' | 'en riesgo' | 'recaptura' {
-  const dias = diasDesde(cliente.ultima_compra);
-  if (dias <= 30) return 'activo';
-  if (dias <= 60) return 'seguimiento';
-  if (dias <= 90) return 'en riesgo';
-  return 'recaptura';
+export function ultimaCompraPorCliente(compras: Compra[], clienteId: string): string | null {
+  const fechas = compras.filter((c) => c.cliente_id === clienteId).map((c) => c.fecha_compra).sort().reverse();
+  return fechas[0] ?? null;
+}
+
+export function scoreRecompraPorFecha(fecha: string | null): 'Activo' | 'Seguimiento' | 'En riesgo' | 'Recaptura' {
+  const dias = diasDesde(fecha);
+  if (dias <= 30) return 'Activo';
+  if (dias <= 60) return 'Seguimiento';
+  if (dias <= 90) return 'En riesgo';
+  return 'Recaptura';
 }

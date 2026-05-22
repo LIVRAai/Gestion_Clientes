@@ -36,9 +36,9 @@ CRM SaaS moderno para pymes enfocado en ciclo de vida del cliente y recompra.
 - `/register`
 - `/dashboard`
 - `/clientes`
+- `/productos`
+- `/compras`
+- `/analitica`
 - `/pipeline`
 - `/recompra`
 - `/tareas`
-
-## Datos de prueba
-En `supabase/schema.sql` se incluye un ejemplo de inserción para `clientes`.
