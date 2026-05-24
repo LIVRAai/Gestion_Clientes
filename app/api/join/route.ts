@@ -1,0 +1,2 @@
+import { NextResponse } from 'next/server';import { supabaseAdmin } from '@/lib/supabase';
+export async function POST(req:Request){const b=await req.json();const {data:participant,error}=await supabaseAdmin.from('participants').insert({group_id:b.group_id,name:b.name,whatsapp:b.whatsapp}).select('*').single(); if(error) return NextResponse.json({error:error.message},{status:400}); await supabaseAdmin.from('payments').upsert({group_id:b.group_id,participant_id:participant.id,status:'Pendiente'}); return NextResponse.json({participant});}
