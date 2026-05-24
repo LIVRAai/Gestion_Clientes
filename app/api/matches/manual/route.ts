@@ -1,0 +1,2 @@
+import { NextResponse } from 'next/server';import { env } from '@/lib/env';import { supabaseAdmin } from '@/lib/supabase';
+export async function POST(req:Request){if(req.headers.get('x-admin-key')!==env.globalAdminKey) return NextResponse.json({error:'unauthorized'},{status:401}); const b=await req.json(); const {error}=await supabaseAdmin.from('matches').insert(b); if(error) return NextResponse.json({error:error.message},{status:400}); return NextResponse.json({ok:true});}

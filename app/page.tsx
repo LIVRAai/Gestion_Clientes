@@ -1,16 +1,3 @@
 import Link from 'next/link';
-
-export default function Home() {
-  return (
-    <div className="min-h-screen flex items-center justify-center p-8">
-      <div className="card max-w-xl p-10 text-center space-y-5">
-        <h1 className="text-4xl font-bold">NextUp CRM</h1>
-        <p className="text-slate-600">Un CRM premium para activar recompra y crecimiento en pymes.</p>
-        <div className="flex gap-3 justify-center">
-          <Link href="/login" className="bg-accent text-white px-5 py-3 rounded-xl">Iniciar sesión</Link>
-          <Link href="/register" className="border border-accent text-accent px-5 py-3 rounded-xl">Crear cuenta</Link>
-        </div>
-      </div>
-    </div>
-  );
-}
+const items=['Cómo funciona','Tabla automática','Control de pagos','Comparte por WhatsApp','Responsive para celular'];
+export default function Home(){return <main className='min-h-screen bg-slate-950 text-white p-6'><section className='max-w-4xl mx-auto py-12'><h1 className='text-4xl font-black'>Arma el parche del Mundial sin enredos</h1><p className='mt-4 text-slate-300'>Crea tu grupo, comparte el link, controla pagos y mira quién va punteando.</p><Link href='/crear' className='inline-block mt-6 bg-emerald-500 text-slate-950 px-5 py-3 rounded-xl font-bold'>Crear mi parche</Link><div className='grid sm:grid-cols-2 gap-4 mt-10'>{items.map(i=><div key={i} className='p-4 rounded-xl bg-slate-900 border border-slate-800'>{i}</div>)}</div><p className='mt-8 text-sm text-slate-400'>Ponga marcador • Ya pagué • No quede de último • Pendientes por pagar • El líder del parche</p></section></main>}

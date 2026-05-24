@@ -1,0 +1,2 @@
+import { NextResponse } from 'next/server';import { supabaseAdmin } from '@/lib/supabase';
+export async function POST(req:Request){const fd=await req.formData();const payload={group_id:String(fd.get('group_id')),participant_id:String(fd.get('participant_id')),status:String(fd.get('status')),note:String(fd.get('note')||''),updated_by_leader:true}; await supabaseAdmin.from('payments').upsert(payload); return NextResponse.redirect(req.headers.get('referer')||'/');}

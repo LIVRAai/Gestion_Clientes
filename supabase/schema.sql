@@ -1,94 +1,74 @@
 create extension if not exists pgcrypto;
 
-create table if not exists public.clientes (
+create table if not exists groups (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references auth.users(id) on delete cascade,
-  nombre text not null,
-  celular text not null,
-  email text,
-  empresa text,
-  etapa_ciclo_vida text not null check (etapa_ciclo_vida in ('Atracción','Profundización','Fidelización','Retención','Recaptura')),
-  estado text not null check (estado in ('Nuevo','Contactado','Interesado','Cliente activo','En riesgo','Inactivo','Recuperado')),
-  origen text,
-  notas text,
-  created_at timestamptz default now(),
-  updated_at timestamptz default now()
+  name text not null,
+  leader_name text not null,
+  leader_whatsapp text not null,
+  payment_method text not null check (payment_method in ('Nequi','Daviplata','Bancolombia','Otro')),
+  payment_account text not null,
+  value_per_person numeric(12,2) not null check (value_per_person > 0),
+  admin_code text not null,
+  public_token text not null unique default encode(gen_random_bytes(12),'hex'),
+  admin_token text not null unique default encode(gen_random_bytes(16),'hex'),
+  scoring_exact int not null default 3,
+  scoring_winner int not null default 1,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
 );
 
-create table if not exists public.productos (
+create table if not exists participants (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references auth.users(id) on delete cascade,
-  nombre text not null,
-  categoria text,
-  precio numeric(12,2) not null default 0,
-  estado text not null default 'Activo' check (estado in ('Activo','Inactivo')),
-  descripcion text,
-  created_at timestamptz default now(),
-  updated_at timestamptz default now()
+  group_id uuid not null references groups(id) on delete cascade,
+  name text not null,
+  whatsapp text not null,
+  created_at timestamptz not null default now(),
+  unique(group_id, whatsapp)
 );
 
-create table if not exists public.compras (
+create table if not exists matches (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references auth.users(id) on delete cascade,
-  cliente_id uuid not null references public.clientes(id) on delete cascade,
-  producto_id uuid not null references public.productos(id) on delete restrict,
-  fecha_compra date not null,
-  cantidad integer not null check (cantidad > 0),
-  valor_unitario numeric(12,2) not null check (valor_unitario >= 0),
-  valor_total numeric(12,2) not null check (valor_total >= 0),
-  notas text,
-  created_at timestamptz default now()
+  external_id int unique,
+  home_team text not null,
+  away_team text not null,
+  kickoff_at timestamptz not null,
+  phase text,
+  status text not null check (status in ('programado','en_vivo','finalizado')) default 'programado',
+  home_score int,
+  away_score int,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
 );
 
-create table if not exists public.tareas (
+create table if not exists predictions (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references auth.users(id) on delete cascade,
-  cliente_id uuid not null references public.clientes(id) on delete cascade,
-  tipo text not null check (tipo in ('llamada','WhatsApp','email','reunión')),
-  estado text not null check (estado in ('pendiente','completada')),
-  fecha_vencimiento date not null,
-  notas text,
-  created_at timestamptz default now(),
-  updated_at timestamptz default now()
+  group_id uuid not null references groups(id) on delete cascade,
+  participant_id uuid not null references participants(id) on delete cascade,
+  match_id uuid not null references matches(id) on delete cascade,
+  home_goals int not null check (home_goals >= 0),
+  away_goals int not null check (away_goals >= 0),
+  points_awarded int not null default 0,
+  exact_hit boolean not null default false,
+  winner_hit boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique(participant_id, match_id)
 );
 
-
-
-create table if not exists public.mensajes_etapa (
+create table if not exists payments (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references auth.users(id) on delete cascade,
-  etapa text not null check (etapa in ('Atracción','Profundización','Fidelización','Retención','Recaptura')),
-  mensaje text not null,
-  created_at timestamptz default now(),
-  updated_at timestamptz default now()
+  group_id uuid not null references groups(id) on delete cascade,
+  participant_id uuid not null references participants(id) on delete cascade,
+  status text not null check (status in ('Pendiente','Reportado','Confirmado')) default 'Pendiente',
+  note text,
+  updated_by_leader boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique(group_id, participant_id)
 );
 
-create table if not exists public.historial_acciones (
-  id uuid primary key default gen_random_uuid(),
-  user_id uuid not null references auth.users(id) on delete cascade,
-  cliente_id uuid not null references public.clientes(id) on delete cascade,
-  accion text not null,
-  detalle text,
-  created_at timestamptz default now()
-);
-
-alter table public.clientes enable row level security;
-alter table public.productos enable row level security;
-alter table public.compras enable row level security;
-alter table public.tareas enable row level security;
-alter table public.historial_acciones enable row level security;
-alter table public.mensajes_etapa enable row level security;
-
-drop policy if exists "clientes_owner" on public.clientes;
-drop policy if exists "productos_owner" on public.productos;
-drop policy if exists "compras_owner" on public.compras;
-drop policy if exists "tareas_owner" on public.tareas;
-drop policy if exists "historial_owner" on public.historial_acciones;
-drop policy if exists "mensajes_owner" on public.mensajes_etapa;
-
-create policy "clientes_owner" on public.clientes for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
-create policy "productos_owner" on public.productos for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
-create policy "compras_owner" on public.compras for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
-create policy "tareas_owner" on public.tareas for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
-create policy "historial_owner" on public.historial_acciones for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
-create policy "mensajes_owner" on public.mensajes_etapa for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+create index if not exists idx_participants_group on participants(group_id);
+create index if not exists idx_predictions_group on predictions(group_id);
+create index if not exists idx_predictions_match on predictions(match_id);
+create index if not exists idx_payments_group on payments(group_id);
+create index if not exists idx_matches_kickoff on matches(kickoff_at);

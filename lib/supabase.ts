@@ -1,12 +1,9 @@
 import { createClient } from '@supabase/supabase-js';
+import { env } from './env';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const url = env.supabaseUrl || 'https://placeholder.supabase.co';
+const anon = env.supabaseAnonKey || 'placeholder-key';
+const service = env.serviceRole || anon;
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true
-  }
-});
+export const supabase = createClient(url, anon);
+export const supabaseAdmin = createClient(url, service);
